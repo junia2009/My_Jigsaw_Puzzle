@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>My Jigsaw Puzzle - 写真でジグソーパズル</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- ===== セットアップ画面 ===== -->
+<div id="setup-screen" class="screen">
+  <header class="setup-header">
+    <h1>🧩 My Jigsaw Puzzle</h1>
+    <p>好きな写真でジグソーパズルを作って遊ぼう!</p>
+  </header>
+
+  <div class="setup-card">
+    <!-- 画像選択 -->
+    <div id="dropzone" class="dropzone">
+      <input type="file" id="file-input" accept="image/*" hidden>
+      <div id="dropzone-empty">
+        <div class="dropzone-icon">📷</div>
+        <p><strong>ここに写真をドラッグ&ドロップ</strong></p>
+        <p class="muted">またはクリックしてファイルを選択</p>
+      </div>
+      <div id="dropzone-preview" hidden>
+        <img id="preview-img" alt="選択した画像">
+        <button id="change-image-btn" class="btn btn-small" type="button">別の写真にする</button>
+      </div>
+    </div>
+
+    <button id="sample-btn" class="btn btn-ghost" type="button">🎨 サンプル画像で遊ぶ</button>
+
+    <!-- 難易度 -->
+    <div class="difficulty">
+      <h2>ピースの数</h2>
+      <div id="difficulty-buttons" class="difficulty-buttons">
+        <button class="btn diff-btn" data-pieces="12" type="button">かんたん<span>12</span></button>
+        <button class="btn diff-btn selected" data-pieces="24" type="button">ふつう<span>24</span></button>
+        <button class="btn diff-btn" data-pieces="54" type="button">むずかしい<span>54</span></button>
+        <button class="btn diff-btn" data-pieces="96" type="button">達人<span>96</span></button>
+        <button class="btn diff-btn" data-pieces="192" type="button">鬼<span>192</span></button>
+      </div>
+    </div>
+
+    <button id="start-btn" class="btn btn-primary" type="button" disabled>スタート!</button>
+  </div>
+</div>
+
+<!-- ===== ゲーム画面 ===== -->
+<div id="game-screen" class="screen" hidden>
+  <div class="toolbar">
+    <div class="toolbar-left">
+      <span class="logo">🧩</span>
+      <span id="stat-time" class="stat" title="経過時間">⏱ 0:00</span>
+      <span id="stat-pieces" class="stat" title="はめたピース">✅ 0 / 0</span>
+    </div>
+    <div class="toolbar-right">
+      <button id="hint-btn" class="btn btn-small" type="button" title="盤面にうっすら完成図を表示">💡 ヒント</button>
+      <button id="peek-btn" class="btn btn-small" type="button" title="完成図を見る">🖼 完成図</button>
+      <button id="shuffle-btn" class="btn btn-small" type="button" title="ピースをばらまき直す">🔀 シャッフル</button>
+      <button id="new-btn" class="btn btn-small" type="button" title="別の写真・難易度でやり直す">🏠 新しいパズル</button>
+    </div>
+  </div>
+  <div id="game-main" class="game-main">
+    <canvas id="game-canvas"></canvas>
+  </div>
+</div>
+
+<!-- 完成図モーダル -->
+<div id="peek-modal" class="modal" hidden>
+  <div class="modal-body">
+    <img id="peek-img" alt="完成図">
+    <p class="muted">クリックで閉じる</p>
+  </div>
+</div>
+
+<!-- クリア画面 -->
+<div id="clear-overlay" class="modal" hidden>
+  <div class="modal-body clear-body">
+    <h2>🎉 完成!おめでとう! 🎉</h2>
+    <p id="clear-stats"></p>
+    <div class="clear-buttons">
+      <button id="clear-again-btn" class="btn" type="button">🔁 同じパズルをもう一度</button>
+      <button id="clear-new-btn" class="btn btn-primary" type="button">🏠 新しいパズル</button>
+    </div>
+  </div>
+</div>
+
+<script src="puzzle.js"></script>
+</body>
+</html>

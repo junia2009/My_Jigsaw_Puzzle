@@ -1,0 +1,334 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+[hidden] {
+  display: none !important;
+}
+
+:root {
+  --bg: #1a1d2e;
+  --bg2: #232741;
+  --card: #2b3050;
+  --accent: #ffb347;
+  --accent2: #ff7e5f;
+  --text: #eef0ff;
+  --muted: #9aa0c3;
+}
+
+html, body {
+  height: 100%;
+}
+
+body {
+  font-family: "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Noto Sans JP", Meiryo, sans-serif;
+  background: linear-gradient(160deg, var(--bg) 0%, var(--bg2) 100%);
+  color: var(--text);
+  overflow: hidden;
+}
+
+.screen {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ===== セットアップ画面 ===== */
+#setup-screen {
+  align-items: center;
+  justify-content: center;
+  gap: 24px;
+  padding: 16px;
+  overflow-y: auto;
+}
+
+.setup-header {
+  text-align: center;
+}
+
+.setup-header h1 {
+  font-size: 2.2rem;
+  background: linear-gradient(90deg, var(--accent), var(--accent2));
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.setup-header p {
+  color: var(--muted);
+  margin-top: 6px;
+}
+
+.setup-card {
+  background: var(--card);
+  border-radius: 18px;
+  padding: 24px;
+  width: min(560px, 94vw);
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.4);
+}
+
+.dropzone {
+  border: 2px dashed #5a628f;
+  border-radius: 14px;
+  padding: 24px;
+  text-align: center;
+  cursor: pointer;
+  transition: border-color 0.2s, background 0.2s;
+}
+
+.dropzone:hover,
+.dropzone.dragover {
+  border-color: var(--accent);
+  background: rgba(255, 179, 71, 0.08);
+}
+
+.dropzone-icon {
+  font-size: 2.6rem;
+  margin-bottom: 8px;
+}
+
+.muted {
+  color: var(--muted);
+  font-size: 0.85rem;
+  margin-top: 4px;
+}
+
+#dropzone-preview img {
+  max-width: 100%;
+  max-height: 220px;
+  border-radius: 10px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.45);
+}
+
+#dropzone-preview button {
+  margin-top: 10px;
+}
+
+.difficulty h2 {
+  font-size: 1rem;
+  margin-bottom: 10px;
+  color: var(--muted);
+}
+
+.difficulty-buttons {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.diff-btn {
+  flex: 1 1 auto;
+  min-width: 84px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+}
+
+.diff-btn span {
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+
+.diff-btn.selected {
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  color: #1c1c2b;
+  font-weight: bold;
+}
+
+.diff-btn.selected span {
+  color: #3c2c1b;
+}
+
+/* ===== ボタン共通 ===== */
+.btn {
+  font-family: inherit;
+  font-size: 0.95rem;
+  color: var(--text);
+  background: #3a4070;
+  border: none;
+  border-radius: 10px;
+  padding: 10px 16px;
+  cursor: pointer;
+  transition: transform 0.1s, filter 0.15s;
+}
+
+.btn:hover:not(:disabled) {
+  filter: brightness(1.15);
+}
+
+.btn:active:not(:disabled) {
+  transform: scale(0.97);
+}
+
+.btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  color: #1c1c2b;
+  font-weight: bold;
+  font-size: 1.1rem;
+  padding: 14px;
+}
+
+.btn-ghost {
+  background: transparent;
+  border: 1px solid #5a628f;
+}
+
+.btn-small {
+  font-size: 0.85rem;
+  padding: 7px 12px;
+}
+
+.btn-small.active {
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  color: #1c1c2b;
+  font-weight: bold;
+}
+
+/* ===== ゲーム画面 ===== */
+.toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 10px 14px;
+  background: rgba(0, 0, 0, 0.25);
+  flex-wrap: wrap;
+}
+
+.toolbar-left,
+.toolbar-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.logo {
+  font-size: 1.4rem;
+}
+
+.stat {
+  font-variant-numeric: tabular-nums;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  padding: 6px 10px;
+  font-size: 0.9rem;
+}
+
+.game-main {
+  flex: 1;
+  position: relative;
+  min-height: 0;
+}
+
+#game-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  touch-action: none;
+  cursor: grab;
+}
+
+#game-canvas.dragging {
+  cursor: grabbing;
+}
+
+/* ===== モーダル ===== */
+.modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(10, 12, 24, 0.82);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 50;
+  cursor: pointer;
+}
+
+.modal-body {
+  text-align: center;
+  padding: 20px;
+}
+
+#peek-img {
+  max-width: min(86vw, 900px);
+  max-height: 76vh;
+  border-radius: 12px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+}
+
+.clear-body {
+  background: var(--card);
+  border-radius: 18px;
+  padding: 36px 44px;
+  cursor: default;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+  animation: pop-in 0.45s cubic-bezier(0.2, 1.4, 0.4, 1);
+}
+
+.clear-body h2 {
+  font-size: 1.7rem;
+  margin-bottom: 12px;
+}
+
+#clear-stats {
+  color: var(--muted);
+  margin-bottom: 22px;
+  white-space: pre-line;
+  line-height: 1.7;
+}
+
+.clear-buttons {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+@keyframes pop-in {
+  from {
+    transform: scale(0.7);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* 紙吹雪 */
+.confetti {
+  position: fixed;
+  top: -30px;
+  font-size: 1.6rem;
+  z-index: 60;
+  pointer-events: none;
+  animation: confetti-fall linear forwards;
+}
+
+@keyframes confetti-fall {
+  to {
+    transform: translateY(110vh) rotate(720deg);
+  }
+}
+
+@media (max-width: 600px) {
+  .setup-header h1 {
+    font-size: 1.6rem;
+  }
+  .stat {
+    font-size: 0.8rem;
+  }
+}
