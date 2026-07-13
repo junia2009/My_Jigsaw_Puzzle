@@ -40,6 +40,66 @@ const clearNewBtn = $('clear-new-btn');
 let sourceImage = null;      // 選択された画像 (ImageBitmap / Canvas / Image)
 let targetPieces = 24;       // 目標ピース数
 let game = null;             // 進行中のゲーム
+let timeMode = 'sunset';     // 時間帯テーマ (day / sunset / night)
+let soundOn = localStorage.getItem('jigsaw-sound') !== '0'; // 波の音
+
+// ============================================================
+// 時間帯テーマ: 実際の時刻に合わせて空が変わる
+//   6-16時: 昼の海 / 16-19時: 夕暮れ (デフォルト) / 19-6時: 夜の海
+//   ?time=day|sunset|night で強制指定も可能
+// ============================================================
+
+// ゲーム画面キャンバス用のパレット (ピースが見やすいよう控えめの明るさ)
+const CANVAS_THEMES = {
+  day: {
+    sky: [[0, '#123a55'], [0.5, '#1c5878'], [1, '#2e7d99']],
+    sea: [[0, '#1d5e77'], [0.35, '#123f56'], [1, '#0a2334']],
+    glow: 'rgba(255,255,255,0.12)',
+    refl: 'rgba(255,255,255,0.10)',
+    starAlpha: 0,
+  },
+  sunset: {
+    sky: [[0, '#150f2d'], [0.45, '#311c48'], [0.78, '#5c2a52'], [1, '#8f4255']],
+    sea: [[0, '#6d3350'], [0.3, '#3a2150'], [1, '#150f26']],
+    glow: 'rgba(255,170,110,0.2)',
+    refl: 'rgba(255,190,120,0.14)',
+    starAlpha: 1,
+  },
+  night: {
+    sky: [[0, '#05060f'], [0.5, '#0e0f28'], [1, '#231744']],
+    sea: [[0, '#191537'], [0.35, '#0e0c24'], [1, '#05060f']],
+    glow: 'rgba(180,200,255,0.10)',
+    refl: 'rgba(190,210,255,0.09)',
+    starAlpha: 1.25,
+  },
+};
+
+function applyTimeTheme() {
+  const forced = new URLSearchParams(location.search).get('time');
+  if (forced && CANVAS_THEMES[forced]) {
+    timeMode = forced;
+  } else {
+    const h = new Date().getHours();
+    timeMode = h >= 6 && h < 16 ? 'day' : h >= 16 && h < 19 ? 'sunset' : 'night';
+  }
+  document.body.classList.remove('time-day', 'time-sunset', 'time-night');
+  document.body.classList.add('time-' + timeMode);
+  const taglines = {
+    day: 'まぶしい海辺で、大切な思い出をもういちど。',
+    sunset: '夕暮れの海辺で、大切な思い出をもういちど。',
+    night: '星降る夜の海辺で、大切な思い出をもういちど。',
+  };
+  const tagline = document.getElementById('tagline');
+  if (tagline) tagline.textContent = taglines[timeMode];
+}
+
+applyTimeTheme();
+// 遊んでいる間に時間帯が変わったら追従 (毎分チェック)
+setInterval(() => {
+  const before = timeMode;
+  applyTimeTheme();
+  if (before !== timeMode && game) draw();
+}, 60000);
 
 // ============================================================
 // セットアップ画面
@@ -406,6 +466,7 @@ function startGame() {
       r: 0.6 + Math.random() * 1.1,
       a: 0.25 + Math.random() * 0.55,
     })),
+    effects: [], // スナップ時の光のエフェクト
   };
 
   peekImg.src = boardImg.toDataURL('image/jpeg', 0.9);
@@ -413,6 +474,7 @@ function startGame() {
   scatterPieces();
   updateStats();
   draw();
+  startWaveSound(); // スタート操作 (ユーザー操作) 起点なので自動再生制限に掛からない
 }
 
 // ピースを盤面の周囲にばらまく
@@ -454,48 +516,46 @@ function draw() {
   const W = canvas.width;
   const H = canvas.height;
 
-  // 背景: 日没後のトワイライトの海 (ピースが見やすいよう控えめの明るさ)
+  // 背景: 時間帯テーマに合わせた海 (ピースが見やすいよう控えめの明るさ)
+  const theme = CANVAS_THEMES[timeMode] || CANVAS_THEMES.sunset;
   const hor = H * 0.62;
   const sky = ctx.createLinearGradient(0, 0, 0, hor);
-  sky.addColorStop(0, '#150f2d');
-  sky.addColorStop(0.45, '#311c48');
-  sky.addColorStop(0.78, '#5c2a52');
-  sky.addColorStop(1, '#8f4255');
+  for (const [pos, col] of theme.sky) sky.addColorStop(pos, col);
   ctx.fillStyle = sky;
   ctx.fillRect(0, 0, W, hor + 1);
 
   const sea = ctx.createLinearGradient(0, hor, 0, H);
-  sea.addColorStop(0, '#6d3350');
-  sea.addColorStop(0.3, '#3a2150');
-  sea.addColorStop(1, '#150f26');
+  for (const [pos, col] of theme.sea) sea.addColorStop(pos, col);
   ctx.fillStyle = sea;
   ctx.fillRect(0, hor, W, H - hor);
 
-  // 水平線に残る夕陽の名残
+  // 水平線に残る光
   const after = ctx.createRadialGradient(W / 2, hor, 0, W / 2, hor, W * 0.45);
-  after.addColorStop(0, 'rgba(255,170,110,0.2)');
-  after.addColorStop(1, 'rgba(255,170,110,0)');
+  after.addColorStop(0, theme.glow);
+  after.addColorStop(1, 'rgba(0,0,0,0)');
   ctx.fillStyle = after;
   ctx.fillRect(0, 0, W, H);
 
   // 光の道 (左右にもやわらかくフェード)
   const rw = W * 0.09;
   const refl = ctx.createLinearGradient(W / 2 - rw, 0, W / 2 + rw, 0);
-  refl.addColorStop(0, 'rgba(255,190,120,0)');
-  refl.addColorStop(0.5, 'rgba(255,190,120,0.14)');
-  refl.addColorStop(1, 'rgba(255,190,120,0)');
+  refl.addColorStop(0, 'rgba(0,0,0,0)');
+  refl.addColorStop(0.5, theme.refl);
+  refl.addColorStop(1, 'rgba(0,0,0,0)');
   ctx.fillStyle = refl;
   ctx.fillRect(W / 2 - rw, hor, rw * 2, H - hor);
 
-  // 星
-  for (const s of g.stars) {
-    ctx.globalAlpha = s.a;
-    ctx.fillStyle = '#ffeeda';
-    ctx.beginPath();
-    ctx.arc(s.x * W, s.y * H, s.r * g.dpr, 0, Math.PI * 2);
-    ctx.fill();
+  // 星 (昼は非表示)
+  if (theme.starAlpha > 0) {
+    for (const s of g.stars) {
+      ctx.globalAlpha = Math.min(1, s.a * theme.starAlpha);
+      ctx.fillStyle = '#ffeeda';
+      ctx.beginPath();
+      ctx.arc(s.x * W, s.y * H, s.r * g.dpr, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    ctx.globalAlpha = 1;
   }
-  ctx.globalAlpha = 1;
 
   // 周辺減光
   const vig = ctx.createRadialGradient(W / 2, H * 0.45, Math.min(W, H) * 0.4, W / 2, H * 0.5, Math.max(W, H) * 0.75);
@@ -527,6 +587,7 @@ function draw() {
   if (g.done) {
     // 完成: つなぎ目のない元画像を表示
     ctx.drawImage(g.boardImg, g.boardX, g.boardY);
+    drawEffects();
     return;
   }
 
@@ -545,6 +606,85 @@ function draw() {
     ctx.drawImage(d.canvas, d.x - d.pad, d.y - d.pad);
     ctx.restore();
   }
+
+  drawEffects();
+}
+
+// ---------- スナップ時の光のエフェクト ----------
+let fxRunning = false;
+
+function spawnSnapEffect(x, y, base) {
+  if (!game) return;
+  game.effects.push({
+    t0: performance.now(),
+    dur: 700,
+    x,
+    y,
+    base,
+    parts: Array.from({ length: 14 }, () => ({
+      ang: Math.random() * Math.PI * 2,
+      sp: base * (0.5 + Math.random() * 0.9),
+      r: 1.4 + Math.random() * 2.2,
+    })),
+  });
+  ensureFxLoop();
+}
+
+function ensureFxLoop() {
+  if (fxRunning) return;
+  fxRunning = true;
+  const tick = () => {
+    if (!game || !game.effects.length) {
+      fxRunning = false;
+      if (game) draw();
+      return;
+    }
+    draw();
+    requestAnimationFrame(tick);
+  };
+  requestAnimationFrame(tick);
+}
+
+function drawEffects() {
+  const g = game;
+  if (!g || !g.effects.length) return;
+  const now = performance.now();
+  ctx.save();
+  ctx.globalCompositeOperation = 'lighter';
+  for (const e of g.effects) {
+    const k = (now - e.t0) / e.dur;
+    if (k >= 1) continue;
+    const ease = 1 - Math.pow(1 - k, 3);
+    const fade = 1 - k;
+
+    // 中心のグロー
+    const R = e.base * (0.35 + ease * 1.05);
+    const glow = ctx.createRadialGradient(e.x, e.y, 0, e.x, e.y, R);
+    glow.addColorStop(0, `rgba(255,224,160,${0.55 * fade})`);
+    glow.addColorStop(1, 'rgba(255,224,160,0)');
+    ctx.fillStyle = glow;
+    ctx.beginPath();
+    ctx.arc(e.x, e.y, R, 0, Math.PI * 2);
+    ctx.fill();
+
+    // 広がる波紋リング
+    ctx.strokeStyle = `rgba(255,242,205,${0.75 * fade})`;
+    ctx.lineWidth = 2.2 * g.dpr * fade + 0.4;
+    ctx.beginPath();
+    ctx.arc(e.x, e.y, e.base * ease * 1.25, 0, Math.PI * 2);
+    ctx.stroke();
+
+    // 飛び散る火花
+    for (const s of e.parts) {
+      const d = s.sp * ease;
+      ctx.fillStyle = `rgba(255,228,175,${0.9 * fade})`;
+      ctx.beginPath();
+      ctx.arc(e.x + Math.cos(s.ang) * d, e.y + Math.sin(s.ang) * d, s.r * g.dpr * (1 - k * 0.6), 0, Math.PI * 2);
+      ctx.fill();
+    }
+  }
+  ctx.restore();
+  g.effects = g.effects.filter((e) => now - e.t0 < e.dur);
 }
 
 // ---------- 入力 ----------
@@ -618,6 +758,7 @@ function endDrag() {
     const lastPlaced = g.order.filter((q) => q.placed).length;
     g.order.splice(lastPlaced, 0, p);
     playSnapSound();
+    spawnSnapEffect(p.tx + g.cellW / 2, p.ty + g.cellH / 2, Math.min(g.cellW, g.cellH) * 1.15);
     updateStats();
     if (g.placedCount === g.pieces.length) {
       finishGame();
@@ -648,6 +789,8 @@ function finishGame() {
   clearInterval(g.timerId);
   const time = formatTime(Date.now() - g.startTime);
   draw();
+  spawnSnapEffect(g.boardX + g.boardW / 2, g.boardY + g.boardH / 2, Math.min(g.boardW, g.boardH) * 0.55);
+  stopWaveSound();
   playFanfare();
   spawnConfetti();
   clearStats.textContent =
@@ -701,6 +844,90 @@ function playFanfare() {
   [523, 659, 784, 1047].forEach((f, i) => beep(f, 0.35, i * 0.13, 'triangle', 0.14));
 }
 
+// ---------- 波の音 (フィルタしたノイズを LFO でゆらす) ----------
+let waveNodes = null;
+
+function startWaveSound() {
+  if (waveNodes || !soundOn) return;
+  try {
+    audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
+    if (audioCtx.state === 'suspended') audioCtx.resume();
+    const sr = audioCtx.sampleRate;
+
+    // ブラウンノイズ (低めの成分が多い = 波っぽい)
+    const buf = audioCtx.createBuffer(1, sr * 4, sr);
+    const data = buf.getChannelData(0);
+    let last = 0;
+    for (let i = 0; i < data.length; i++) {
+      last = (last + 0.02 * (Math.random() * 2 - 1)) / 1.02;
+      data[i] = last * 3.5;
+    }
+    const src = audioCtx.createBufferSource();
+    src.buffer = buf;
+    src.loop = true;
+
+    const filter = audioCtx.createBiquadFilter();
+    filter.type = 'lowpass';
+    filter.frequency.value = 520;
+    filter.Q.value = 0.6;
+
+    // 音量をゆっくり揺らして「寄せては返す」感じに
+    const master = audioCtx.createGain();
+    master.gain.value = 0.05;
+    const addLfo = (freq, depth) => {
+      const lfo = audioCtx.createOscillator();
+      const lg = audioCtx.createGain();
+      lfo.frequency.value = freq;
+      lg.gain.value = depth;
+      lfo.connect(lg).connect(master.gain);
+      lfo.start();
+      return lfo;
+    };
+    const lfo1 = addLfo(0.07, 0.035);
+    const lfo2 = addLfo(0.121, 0.016);
+
+    src.connect(filter).connect(master).connect(audioCtx.destination);
+    src.start();
+    waveNodes = { src, lfo1, lfo2, master };
+  } catch (_) {
+    /* 音が出せない環境では無視 */
+  }
+}
+
+function stopWaveSound() {
+  if (!waveNodes) return;
+  const w = waveNodes;
+  waveNodes = null;
+  try {
+    w.master.gain.setTargetAtTime(0.0001, audioCtx.currentTime, 0.25);
+    setTimeout(() => {
+      try {
+        w.src.stop();
+        w.lfo1.stop();
+        w.lfo2.stop();
+      } catch (_) { /* 既に停止済み */ }
+    }, 900);
+  } catch (_) { /* 破棄途中のエラーは無視 */ }
+}
+
+const soundBtn = $('sound-btn');
+const soundIco = $('sound-ico');
+
+function updateSoundBtn() {
+  soundIco.textContent = soundOn ? '🔊' : '🔇';
+  soundBtn.classList.toggle('active', soundOn);
+}
+
+updateSoundBtn();
+
+soundBtn.addEventListener('click', () => {
+  soundOn = !soundOn;
+  localStorage.setItem('jigsaw-sound', soundOn ? '1' : '0');
+  updateSoundBtn();
+  if (game && !game.done && soundOn) startWaveSound();
+  else stopWaveSound();
+});
+
 // ---------- ツールバー ----------
 hintBtn.addEventListener('click', () => {
   if (!game) return;
@@ -724,6 +951,7 @@ shuffleBtn.addEventListener('click', () => {
 
 function backToSetup() {
   if (game) clearInterval(game.timerId);
+  stopWaveSound();
   game = null;
   clearOverlay.hidden = true;
   gameScreen.hidden = true;
@@ -754,6 +982,12 @@ if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
 window.__puzzle = {
   get game() {
     return game;
+  },
+  get soundPlaying() {
+    return !!waveNodes;
+  },
+  get timeMode() {
+    return timeMode;
   },
   setSourceImage,
   startGame,
