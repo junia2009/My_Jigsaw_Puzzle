@@ -5,8 +5,8 @@
  * 好きな写真からジグソーパズルを生成して遊べるゲーム
  * ============================================================ */
 
-// アプリのバージョン (リリース時にここを更新し、sw.js の CACHE も上げる)
-const APP_VERSION = '1.6.0';
+// アプリのバージョン
+const APP_VERSION = '1.6.1';
 
 // ---------- DOM ----------
 const $ = (id) => document.getElementById(id);
@@ -980,9 +980,13 @@ clearAgainBtn.addEventListener('click', () => {
 // (file:// で開いた場合は SW 非対応なのでスキップ)
 if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
   window.addEventListener('load', () => {
-    navigator.serviceWorker.register('./sw.js').catch((err) => {
-      console.warn('Service Worker の登録に失敗:', err);
-    });
+    // updateViaCache:'none' で sw.js 自体も HTTP キャッシュを使わず毎回確認する
+    navigator.serviceWorker
+      .register('./sw.js', { updateViaCache: 'none' })
+      .then((reg) => reg.update().catch(() => {}))
+      .catch((err) => {
+        console.warn('Service Worker の登録に失敗:', err);
+      });
   });
 }
 
