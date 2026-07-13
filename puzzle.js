@@ -6,7 +6,7 @@
  * ============================================================ */
 
 // アプリのバージョン
-const APP_VERSION = '1.6.2';
+const APP_VERSION = '1.6.3';
 
 // ---------- DOM ----------
 const $ = (id) => document.getElementById(id);
@@ -778,6 +778,8 @@ function endDrag() {
 
 canvas.addEventListener('pointerup', endDrag);
 canvas.addEventListener('pointercancel', endDrag);
+// 長押し・右クリックでコンテキストメニューを出さない (ドラッグ操作の誤発動防止)
+canvas.addEventListener('contextmenu', (e) => e.preventDefault());
 
 // ---------- 進行状況 ----------
 function formatTime(ms) {

@@ -31,6 +31,12 @@ html {
   /* セーフエリア・オーバースクロール部分にも背景色を敷く */
   background: var(--sky-top);
   height: 100%;
+  /* ゲームアプリなので長押しの選択・メニュー・タップハイライトを無効化
+     (iOS の「コピー/調べる/翻訳」や画像保存メニューの誤発動を防ぐ) */
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+  -webkit-tap-highlight-color: transparent;
 }
 
 body {
