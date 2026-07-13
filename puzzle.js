@@ -175,6 +175,9 @@ function setSourceImage(img) {
   previewImg.src = thumb.toDataURL('image/jpeg', 0.85);
   dropzoneEmpty.hidden = true;
   dropzonePreview.hidden = false;
+  dropzone.classList.add('has-image');
+  // 選択後は表示を最小限に (サンプルボタンをしまう)
+  sampleBtn.hidden = true;
   startBtn.disabled = false;
 }
 
