@@ -690,6 +690,16 @@ clearAgainBtn.addEventListener('click', () => {
 
 // リサイズ時: ゲーム中はキャンバスの CSS スケーリングに任せる (座標変換で対応済み)
 
+// ---------- PWA: Service Worker 登録 ----------
+// (file:// で開いた場合は SW 非対応なのでスキップ)
+if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./sw.js').catch((err) => {
+      console.warn('Service Worker の登録に失敗:', err);
+    });
+  });
+}
+
 // デバッグ・テスト用フック
 window.__puzzle = {
   get game() {
