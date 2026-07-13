@@ -357,13 +357,10 @@ function startGame() {
   const aspect = sourceImage.width / sourceImage.height;
   const { cols, rows } = computeGrid(aspect, targetPieces);
 
-  // 盤面サイズ: 周囲にピース置き場の余白を残して中央に配置
-  let boardW = cw * 0.58;
+  // 盤面サイズ: 画面の縦横それぞれの上限内で最大化する
+  // (縦長画面ならピースは上下に、横長画面なら左右に散らばる)
+  let boardW = Math.min(cw * 0.86, ch * 0.62 * aspect);
   let boardH = boardW / aspect;
-  if (boardH > ch * 0.66) {
-    boardH = ch * 0.66;
-    boardW = boardH * aspect;
-  }
   boardW = Math.round(boardW);
   boardH = Math.round(boardH);
   const boardX = Math.round((cw - boardW) / 2);
