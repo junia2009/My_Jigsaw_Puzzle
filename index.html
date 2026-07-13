@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
 <title>My Jigsaw Puzzle - 写真でジグソーパズル</title>
 <meta name="description" content="好きな写真をアップロードして自分だけのジグソーパズルを作って遊べるゲーム">
-<meta name="theme-color" content="#1a1d2e">
+<meta name="theme-color" content="#1d1537">
 <link rel="manifest" href="manifest.json">
 <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
@@ -16,14 +16,28 @@
 </head>
 <body>
 
+<!-- ===== 背景シーン: 常夏の夕暮れの海 ===== -->
+<div class="scene" aria-hidden="true">
+  <div class="scene-stars stars-1"></div>
+  <div class="scene-stars stars-2"></div>
+  <div class="scene-cloud cloud-1"></div>
+  <div class="scene-cloud cloud-2"></div>
+  <div class="scene-cloud cloud-3"></div>
+  <div class="scene-sun"></div>
+  <div class="scene-sea">
+    <div class="scene-reflection"></div>
+  </div>
+  <div class="scene-palm palm-1">🌴</div>
+  <div class="scene-palm palm-2">🌴</div>
+  <div class="scene-grain"></div>
+  <div class="scene-vignette"></div>
+</div>
+
 <!-- ===== セットアップ画面 ===== -->
 <div id="setup-screen" class="screen">
-  <div class="deco deco-1" aria-hidden="true">🧩</div>
-  <div class="deco deco-2" aria-hidden="true">🧩</div>
-
   <header class="setup-header">
     <h1><span class="title-icon">🧩</span>My Jigsaw Puzzle</h1>
-    <p>好きな写真が、あなただけのパズルになる</p>
+    <p>夕暮れの海辺で、大切な思い出をもういちど。</p>
   </header>
 
   <div class="setup-card">
@@ -90,7 +104,8 @@
 <!-- クリア画面 -->
 <div id="clear-overlay" class="modal" hidden>
   <div class="modal-body clear-body">
-    <h2>🎉 完成!おめでとう! 🎉</h2>
+    <h2>🌅 完成!おめでとう!</h2>
+    <p class="clear-sub">また一つ、心に残る風景ができました。</p>
     <p id="clear-stats"></p>
     <div class="clear-buttons">
       <button id="clear-again-btn" class="btn" type="button">🔁 同じパズルをもう一度</button>

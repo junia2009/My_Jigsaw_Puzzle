@@ -399,6 +399,13 @@ function startGame() {
     timerId: setInterval(updateStats, 1000),
     done: false,
     snapDist: Math.max(18 * dpr, Math.min(cellW, cellH) * 0.4),
+    // 背景の星 (位置は開始時に固定)
+    stars: Array.from({ length: 70 }, () => ({
+      x: Math.random(),
+      y: Math.random() * 0.42,
+      r: 0.6 + Math.random() * 1.1,
+      a: 0.25 + Math.random() * 0.55,
+    })),
   };
 
   peekImg.src = boardImg.toDataURL('image/jpeg', 0.9);
@@ -447,24 +454,60 @@ function draw() {
   const W = canvas.width;
   const H = canvas.height;
 
-  // 背景 (画面全体のテーマと揃えたダークトーン + 中央の淡いグロー)
-  const bg = ctx.createLinearGradient(0, 0, 0, H);
-  bg.addColorStop(0, '#141830');
-  bg.addColorStop(1, '#0b0d17');
-  ctx.fillStyle = bg;
+  // 背景: 日没後のトワイライトの海 (ピースが見やすいよう控えめの明るさ)
+  const hor = H * 0.62;
+  const sky = ctx.createLinearGradient(0, 0, 0, hor);
+  sky.addColorStop(0, '#150f2d');
+  sky.addColorStop(0.45, '#311c48');
+  sky.addColorStop(0.78, '#5c2a52');
+  sky.addColorStop(1, '#8f4255');
+  ctx.fillStyle = sky;
+  ctx.fillRect(0, 0, W, hor + 1);
+
+  const sea = ctx.createLinearGradient(0, hor, 0, H);
+  sea.addColorStop(0, '#6d3350');
+  sea.addColorStop(0.3, '#3a2150');
+  sea.addColorStop(1, '#150f26');
+  ctx.fillStyle = sea;
+  ctx.fillRect(0, hor, W, H - hor);
+
+  // 水平線に残る夕陽の名残
+  const after = ctx.createRadialGradient(W / 2, hor, 0, W / 2, hor, W * 0.45);
+  after.addColorStop(0, 'rgba(255,170,110,0.2)');
+  after.addColorStop(1, 'rgba(255,170,110,0)');
+  ctx.fillStyle = after;
   ctx.fillRect(0, 0, W, H);
 
-  const glow = ctx.createRadialGradient(W / 2, H / 2, 0, W / 2, H / 2, Math.max(W, H) * 0.6);
-  glow.addColorStop(0, 'rgba(255,179,71,0.06)');
-  glow.addColorStop(0.5, 'rgba(139,92,246,0.04)');
-  glow.addColorStop(1, 'rgba(0,0,0,0)');
-  ctx.fillStyle = glow;
+  // 光の道 (左右にもやわらかくフェード)
+  const rw = W * 0.09;
+  const refl = ctx.createLinearGradient(W / 2 - rw, 0, W / 2 + rw, 0);
+  refl.addColorStop(0, 'rgba(255,190,120,0)');
+  refl.addColorStop(0.5, 'rgba(255,190,120,0.14)');
+  refl.addColorStop(1, 'rgba(255,190,120,0)');
+  ctx.fillStyle = refl;
+  ctx.fillRect(W / 2 - rw, hor, rw * 2, H - hor);
+
+  // 星
+  for (const s of g.stars) {
+    ctx.globalAlpha = s.a;
+    ctx.fillStyle = '#ffeeda';
+    ctx.beginPath();
+    ctx.arc(s.x * W, s.y * H, s.r * g.dpr, 0, Math.PI * 2);
+    ctx.fill();
+  }
+  ctx.globalAlpha = 1;
+
+  // 周辺減光
+  const vig = ctx.createRadialGradient(W / 2, H * 0.45, Math.min(W, H) * 0.4, W / 2, H * 0.5, Math.max(W, H) * 0.75);
+  vig.addColorStop(0, 'rgba(0,0,0,0)');
+  vig.addColorStop(1, 'rgba(8,4,18,0.5)');
+  ctx.fillStyle = vig;
   ctx.fillRect(0, 0, W, H);
 
   // 盤面
   ctx.save();
-  ctx.fillStyle = 'rgba(255,255,255,0.04)';
-  ctx.strokeStyle = 'rgba(255,255,255,0.28)';
+  ctx.fillStyle = 'rgba(12,7,24,0.45)';
+  ctx.strokeStyle = 'rgba(255,215,170,0.35)';
   ctx.lineWidth = 2;
   ctx.setLineDash([10, 7]);
   ctx.beginPath();
@@ -615,7 +658,7 @@ function finishGame() {
 }
 
 function spawnConfetti() {
-  const emoji = ['🎉', '✨', '🧩', '⭐', '🎊'];
+  const emoji = ['🌺', '🐚', '⭐', '✨', '🧩', '🌴'];
   for (let i = 0; i < 40; i++) {
     const el = document.createElement('span');
     el.className = 'confetti';

@@ -9,22 +9,27 @@
 }
 
 :root {
-  --bg0: #0b0d17;
-  --bg1: #151931;
-  --glass: rgba(255, 255, 255, 0.05);
-  --glass-strong: rgba(255, 255, 255, 0.08);
-  --border: rgba(255, 255, 255, 0.1);
-  --text: #f2f3fb;
-  --muted: #9aa1c4;
-  --accent: #ffb347;
-  --accent2: #ff6b6b;
-  --grad: linear-gradient(135deg, #ffb347, #ff6b6b);
-  --shadow: 0 24px 64px rgba(0, 0, 0, 0.5);
+  /* 常夏の夕暮れパレット */
+  --sky-top: #1d1537;
+  --sky-mid: #4a2560;
+  --sky-low: #a04468;
+  --horizon: #e8795a;
+  --gold: #ffd97a;
+  --sea-top: #6b2f5e;
+  --sea-deep: #171129;
+  --text: #fff4e8;
+  --muted: #cfa8a0;
+  --glass: rgba(28, 14, 40, 0.5);
+  --glass-strong: rgba(32, 16, 44, 0.72);
+  --border: rgba(255, 205, 160, 0.18);
+  --accent: #ffb066;
+  --grad: linear-gradient(135deg, #ffd166, #ff7b54 55%, #ff4f7b);
+  --shadow: 0 24px 64px rgba(10, 4, 20, 0.55);
 }
 
 html {
   /* セーフエリア・オーバースクロール部分にも背景色を敷く */
-  background: var(--bg0);
+  background: var(--sky-top);
   height: 100%;
 }
 
@@ -33,16 +38,246 @@ body {
   color: var(--text);
   min-height: 100%;
   overflow: hidden;
-  background:
-    radial-gradient(1000px 700px at 12% -10%, rgba(255, 179, 71, 0.13), transparent 60%),
-    radial-gradient(900px 700px at 105% 15%, rgba(139, 92, 246, 0.14), transparent 60%),
-    radial-gradient(800px 600px at 50% 115%, rgba(255, 107, 107, 0.1), transparent 60%),
-    linear-gradient(180deg, var(--bg1), var(--bg0) 70%);
-  background-attachment: fixed;
+  background: var(--sea-deep);
   -webkit-font-smoothing: antialiased;
 }
 
+/* ============================================================
+   背景シーン: 常夏の夕暮れの海
+   ============================================================ */
+.scene {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+  /* 空 */
+  background: linear-gradient(
+    180deg,
+    var(--sky-top) 0%,
+    #35204f 26%,
+    var(--sky-mid) 42%,
+    #7c3564 54%,
+    var(--sky-low) 60%,
+    var(--horizon) 66%,
+    #ffb072 69.5%
+  );
+}
+
+/* 星 (上空でまたたく) */
+.scene-stars {
+  position: absolute;
+  width: 2px;
+  height: 2px;
+  border-radius: 50%;
+  animation: twinkle 4.5s ease-in-out infinite;
+}
+
+.stars-1 {
+  box-shadow:
+    5vw 8vh 0 0 rgba(255, 245, 225, 0.9),
+    12vw 15vh 0 0 rgba(255, 235, 210, 0.6),
+    20vw 5vh 0 0 rgba(255, 245, 225, 0.85),
+    28vw 11vh 0 0 rgba(255, 235, 210, 0.55),
+    35vw 3vh 0 0 rgba(255, 245, 225, 0.75),
+    43vw 9vh 0 0 rgba(255, 235, 210, 0.6),
+    52vw 6vh 0 0 rgba(255, 245, 225, 0.9),
+    60vw 13vh 0 0 rgba(255, 235, 210, 0.5),
+    68vw 4vh 0 0 rgba(255, 245, 225, 0.8),
+    76vw 10vh 0 0 rgba(255, 235, 210, 0.6),
+    85vw 7vh 0 0 rgba(255, 245, 225, 0.85),
+    93vw 14vh 0 0 rgba(255, 235, 210, 0.55);
+}
+
+.stars-2 {
+  width: 1.5px;
+  height: 1.5px;
+  animation-duration: 6s;
+  animation-delay: 1.6s;
+  box-shadow:
+    9vw 20vh 0 0 rgba(255, 235, 215, 0.5),
+    17vw 26vh 0 0 rgba(255, 225, 200, 0.4),
+    26vw 19vh 0 0 rgba(255, 235, 215, 0.55),
+    38vw 24vh 0 0 rgba(255, 225, 200, 0.35),
+    47vw 17vh 0 0 rgba(255, 235, 215, 0.5),
+    57vw 22vh 0 0 rgba(255, 225, 200, 0.4),
+    66vw 28vh 0 0 rgba(255, 235, 215, 0.35),
+    74vw 18vh 0 0 rgba(255, 225, 200, 0.45),
+    83vw 25vh 0 0 rgba(255, 235, 215, 0.4),
+    91vw 20vh 0 0 rgba(255, 225, 200, 0.5);
+}
+
+@keyframes twinkle {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.35; }
+}
+
+/* 茜色の雲 */
+.scene-cloud {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(28px);
+  animation: drift 70s ease-in-out infinite alternate;
+}
+
+.cloud-1 {
+  width: 46vw;
+  height: 7vh;
+  left: 6vw;
+  top: 38vh;
+  background: rgba(255, 140, 120, 0.22);
+}
+
+.cloud-2 {
+  width: 38vw;
+  height: 6vh;
+  right: 4vw;
+  top: 48vh;
+  background: rgba(255, 170, 130, 0.25);
+  animation-duration: 90s;
+  animation-delay: -30s;
+}
+
+.cloud-3 {
+  width: 30vw;
+  height: 5vh;
+  left: 30vw;
+  top: 55vh;
+  background: rgba(255, 190, 150, 0.2);
+  animation-duration: 80s;
+  animation-delay: -55s;
+}
+
+@keyframes drift {
+  from { transform: translateX(-4vw); }
+  to { transform: translateX(4vw); }
+}
+
+/* 沈む太陽 */
+.scene-sun {
+  position: absolute;
+  left: 50%;
+  top: 60vh;
+  width: 15vmin;
+  height: 15vmin;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background: radial-gradient(circle, #fff7dc 0%, var(--gold) 55%, #ffab63 100%);
+  box-shadow:
+    0 0 40px 18px rgba(255, 205, 130, 0.5),
+    0 0 140px 70px rgba(255, 150, 90, 0.3),
+    0 0 320px 160px rgba(255, 120, 80, 0.16);
+  animation: sun-breathe 7s ease-in-out infinite;
+}
+
+@keyframes sun-breathe {
+  0%, 100% { box-shadow: 0 0 40px 18px rgba(255, 205, 130, 0.5), 0 0 140px 70px rgba(255, 150, 90, 0.3), 0 0 320px 160px rgba(255, 120, 80, 0.16); }
+  50% { box-shadow: 0 0 48px 22px rgba(255, 205, 130, 0.62), 0 0 160px 80px rgba(255, 150, 90, 0.38), 0 0 340px 170px rgba(255, 120, 80, 0.2); }
+}
+
+/* 海 */
+.scene-sea {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 66vh;
+  bottom: 0;
+  background: linear-gradient(180deg, #d86a54 0%, var(--sea-top) 22%, #3b2154 55%, var(--sea-deep) 100%);
+}
+
+/* さざ波のきらめき */
+.scene-sea::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    180deg,
+    rgba(255, 200, 140, 0.09) 0 2px,
+    transparent 2px 9px
+  );
+  mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.9), transparent 75%);
+  -webkit-mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.9), transparent 75%);
+  animation: waves 9s linear infinite;
+}
+
+@keyframes waves {
+  from { background-position-y: 0; }
+  to { background-position-y: 11px; }
+}
+
+/* 太陽の光の道 */
+.scene-reflection {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  transform: translateX(-50%);
+  width: 17vmin;
+  height: 90%;
+  background: linear-gradient(180deg, rgba(255, 214, 140, 0.65), rgba(255, 160, 100, 0.22) 45%, transparent 85%);
+  filter: blur(7px);
+  animation: shimmer 5.5s ease-in-out infinite;
+}
+
+@keyframes shimmer {
+  0%, 100% { opacity: 0.85; width: 17vmin; }
+  50% { opacity: 0.55; width: 20vmin; }
+}
+
+/* ヤシの木のシルエット */
+.scene-palm {
+  position: absolute;
+  bottom: -4vmin;
+  font-size: 42vmin;
+  line-height: 1;
+  filter: brightness(0);
+  opacity: 0.82;
+  transform-origin: 50% 95%;
+  animation: sway 9s ease-in-out infinite alternate;
+}
+
+.palm-1 {
+  left: -13vmin;
+}
+
+.palm-2 {
+  right: -14vmin;
+  font-size: 30vmin;
+  animation-delay: -4.5s;
+}
+
+@keyframes sway {
+  from { transform: rotate(-1.6deg); }
+  to { transform: rotate(1.6deg); }
+}
+
+/* フィルム風の粒子 */
+.scene-grain {
+  position: absolute;
+  inset: 0;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)' opacity='0.55'/%3E%3C/svg%3E");
+  opacity: 0.05;
+  mix-blend-mode: overlay;
+}
+
+/* 周辺減光 (ノスタルジックなヴィネット) */
+.scene-vignette {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(120% 100% at 50% 42%, transparent 55%, rgba(12, 5, 24, 0.6));
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scene * {
+    animation: none !important;
+  }
+}
+
+/* ============================================================
+   レイアウト
+   ============================================================ */
 .screen {
+  position: relative;
+  z-index: 1;
   height: 100vh;
   height: 100dvh;
   display: flex;
@@ -56,64 +291,38 @@ body {
   gap: clamp(20px, 4vh, 40px);
   padding: calc(20px + env(safe-area-inset-top)) 16px calc(28px + env(safe-area-inset-bottom));
   overflow-y: auto;
-  position: relative;
-}
-
-/* 背景の装飾ピース */
-.deco {
-  position: fixed;
-  font-size: 34vmin;
-  opacity: 0.05;
-  pointer-events: none;
-  user-select: none;
-  filter: blur(1px);
-  z-index: 0;
-}
-
-.deco-1 {
-  top: -8vmin;
-  left: -8vmin;
-  transform: rotate(-24deg);
-}
-
-.deco-2 {
-  bottom: -10vmin;
-  right: -8vmin;
-  transform: rotate(18deg);
 }
 
 .setup-header {
   text-align: center;
-  position: relative;
-  z-index: 1;
 }
 
 .setup-header h1 {
   font-size: clamp(1.7rem, 5.5vw, 2.6rem);
   font-weight: 800;
   letter-spacing: 0.02em;
-  background: linear-gradient(92deg, #ffd58a 0%, var(--accent) 35%, var(--accent2) 100%);
+  background: linear-gradient(92deg, #ffe9a8 0%, #ffb066 40%, #ff6f7d 100%);
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 3px 16px rgba(255, 140, 90, 0.3));
 }
 
 .title-icon {
   -webkit-text-fill-color: initial;
   margin-right: 0.35em;
-  filter: drop-shadow(0 4px 12px rgba(255, 179, 71, 0.35));
+  filter: drop-shadow(0 4px 12px rgba(255, 179, 71, 0.4));
 }
 
 .setup-header p {
   color: var(--muted);
   margin-top: 10px;
   font-size: 0.95rem;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.12em;
+  text-shadow: 0 1px 10px rgba(20, 8, 30, 0.8);
 }
 
 .setup-card {
-  position: relative;
-  z-index: 1;
   background: var(--glass);
   border: 1px solid var(--border);
   border-radius: 24px;
@@ -123,25 +332,25 @@ body {
   flex-direction: column;
   gap: 20px;
   box-shadow: var(--shadow);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
 }
 
 /* --- ドロップゾーン --- */
 .dropzone {
-  border: 1.5px dashed rgba(255, 255, 255, 0.22);
+  border: 1.5px dashed rgba(255, 210, 165, 0.35);
   border-radius: 18px;
   padding: 26px 20px;
   text-align: center;
   cursor: pointer;
   transition: border-color 0.2s, background 0.2s, transform 0.15s;
-  background: rgba(255, 255, 255, 0.02);
+  background: rgba(255, 235, 210, 0.03);
 }
 
 .dropzone:hover,
 .dropzone.dragover {
-  border-color: var(--accent);
-  background: rgba(255, 179, 71, 0.06);
+  border-color: var(--gold);
+  background: rgba(255, 200, 120, 0.08);
 }
 
 .dropzone:active {
@@ -156,9 +365,9 @@ body {
   place-items: center;
   font-size: 1.9rem;
   border-radius: 22px;
-  background: linear-gradient(135deg, rgba(255, 179, 71, 0.18), rgba(255, 107, 107, 0.18));
-  border: 1px solid rgba(255, 179, 71, 0.25);
-  box-shadow: 0 8px 24px rgba(255, 140, 90, 0.15);
+  background: linear-gradient(135deg, rgba(255, 209, 102, 0.22), rgba(255, 79, 123, 0.2));
+  border: 1px solid rgba(255, 200, 130, 0.35);
+  box-shadow: 0 8px 24px rgba(255, 130, 90, 0.2);
 }
 
 .dropzone-title {
@@ -176,7 +385,7 @@ body {
   max-width: 100%;
   max-height: 220px;
   border-radius: 14px;
-  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 12px 32px rgba(10, 4, 20, 0.55);
   border: 1px solid var(--border);
 }
 
@@ -191,7 +400,6 @@ body {
   letter-spacing: 0.14em;
   margin-bottom: 12px;
   color: var(--muted);
-  text-transform: uppercase;
 }
 
 .difficulty-buttons {
@@ -203,7 +411,7 @@ body {
 .diff-btn {
   font-family: inherit;
   color: var(--text);
-  background: rgba(255, 255, 255, 0.04);
+  background: rgba(255, 235, 210, 0.05);
   border: 1px solid var(--border);
   border-radius: 14px;
   padding: 12px 4px 10px;
@@ -216,7 +424,7 @@ body {
 }
 
 .diff-btn:hover {
-  background: rgba(255, 255, 255, 0.08);
+  background: rgba(255, 235, 210, 0.1);
 }
 
 .diff-btn:active {
@@ -235,9 +443,9 @@ body {
 }
 
 .diff-btn.selected {
-  background: linear-gradient(135deg, rgba(255, 179, 71, 0.22), rgba(255, 107, 107, 0.22));
-  border-color: rgba(255, 179, 71, 0.65);
-  box-shadow: 0 0 0 3px rgba(255, 179, 71, 0.15), 0 8px 24px rgba(255, 140, 90, 0.12);
+  background: linear-gradient(135deg, rgba(255, 209, 102, 0.26), rgba(255, 79, 123, 0.24));
+  border-color: rgba(255, 190, 110, 0.7);
+  box-shadow: 0 0 0 3px rgba(255, 180, 100, 0.18), 0 8px 24px rgba(255, 120, 80, 0.18);
 }
 
 .diff-btn.selected .diff-count {
@@ -248,7 +456,7 @@ body {
 }
 
 .diff-btn.selected .diff-label {
-  color: #ffd8b0;
+  color: #ffdcb2;
 }
 
 /* ===== ボタン共通 ===== */
@@ -256,7 +464,7 @@ body {
   font-family: inherit;
   font-size: 0.95rem;
   color: var(--text);
-  background: rgba(255, 255, 255, 0.07);
+  background: rgba(255, 235, 210, 0.08);
   border: 1px solid var(--border);
   border-radius: 12px;
   padding: 11px 16px;
@@ -269,7 +477,7 @@ body {
 }
 
 .btn:hover:not(:disabled) {
-  background: rgba(255, 255, 255, 0.12);
+  background: rgba(255, 235, 210, 0.15);
 }
 
 .btn:active:not(:disabled) {
@@ -284,13 +492,13 @@ body {
 .btn-primary {
   background: var(--grad);
   border: none;
-  color: #241206;
+  color: #401505;
   font-weight: 800;
   font-size: 1.1rem;
   letter-spacing: 0.1em;
   padding: 16px;
   border-radius: 16px;
-  box-shadow: 0 12px 32px rgba(255, 120, 80, 0.35);
+  box-shadow: 0 12px 32px rgba(255, 110, 80, 0.45);
 }
 
 .btn-primary:hover:not(:disabled) {
@@ -309,9 +517,9 @@ body {
 }
 
 .btn-small.active {
-  background: linear-gradient(135deg, rgba(255, 179, 71, 0.25), rgba(255, 107, 107, 0.25));
-  border-color: rgba(255, 179, 71, 0.65);
-  color: #ffd8b0;
+  background: linear-gradient(135deg, rgba(255, 209, 102, 0.28), rgba(255, 79, 123, 0.26));
+  border-color: rgba(255, 190, 110, 0.7);
+  color: #ffdcb2;
 }
 
 /* ===== ゲーム画面 ===== */
@@ -321,7 +529,7 @@ body {
   justify-content: space-between;
   gap: 10px;
   padding: calc(10px + env(safe-area-inset-top)) calc(14px + env(safe-area-inset-right)) 10px calc(14px + env(safe-area-inset-left));
-  background: rgba(11, 13, 23, 0.6);
+  background: rgba(24, 10, 34, 0.55);
   border-bottom: 1px solid var(--border);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
@@ -340,12 +548,12 @@ body {
 .logo {
   font-size: 1.3rem;
   margin-right: 2px;
-  filter: drop-shadow(0 2px 8px rgba(255, 179, 71, 0.4));
+  filter: drop-shadow(0 2px 8px rgba(255, 179, 71, 0.45));
 }
 
 .stat {
   font-variant-numeric: tabular-nums;
-  background: rgba(255, 255, 255, 0.06);
+  background: rgba(255, 235, 210, 0.07);
   border: 1px solid var(--border);
   border-radius: 999px;
   padding: 6px 13px;
@@ -375,7 +583,7 @@ body {
 .modal {
   position: fixed;
   inset: 0;
-  background: rgba(7, 9, 18, 0.8);
+  background: rgba(14, 6, 26, 0.8);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
   display: flex;
@@ -413,11 +621,18 @@ body {
 .clear-body h2 {
   font-size: 1.6rem;
   font-weight: 800;
-  margin-bottom: 14px;
-  background: linear-gradient(92deg, #ffd58a, var(--accent2));
+  margin-bottom: 10px;
+  background: linear-gradient(92deg, #ffe9a8, #ff6f7d);
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
+}
+
+.clear-sub {
+  color: #ffd9b8;
+  font-size: 0.92rem;
+  letter-spacing: 0.08em;
+  margin-bottom: 16px;
 }
 
 #clear-stats {
@@ -497,5 +712,9 @@ body {
 
   .clear-body {
     padding: 30px 24px;
+  }
+
+  .scene-palm {
+    font-size: 34vmin;
   }
 }
