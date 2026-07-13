@@ -2,7 +2,7 @@
 
 /* Service Worker: アプリ一式をキャッシュしてオフラインでも遊べるようにする */
 
-const CACHE = 'my-jigsaw-puzzle-v6';
+const CACHE = 'my-jigsaw-puzzle-v7';
 
 const ASSETS = [
   './',

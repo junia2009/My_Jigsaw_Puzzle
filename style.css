@@ -454,6 +454,23 @@ body.time-night .scene-vignette {
   filter: drop-shadow(0 4px 12px rgba(255, 179, 71, 0.4));
 }
 
+/* バージョンバッジ */
+.version {
+  -webkit-text-fill-color: var(--muted);
+  display: inline-block;
+  vertical-align: super;
+  font-size: 0.36em;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  color: var(--muted);
+  background: rgba(255, 235, 210, 0.08);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 2px 9px;
+  margin-left: 0.6em;
+  filter: none;
+}
+
 .setup-header p {
   color: var(--muted);
   margin-top: 10px;

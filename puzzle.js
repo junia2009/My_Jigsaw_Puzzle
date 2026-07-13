@@ -5,6 +5,9 @@
  * 好きな写真からジグソーパズルを生成して遊べるゲーム
  * ============================================================ */
 
+// アプリのバージョン (リリース時にここを更新し、sw.js の CACHE も上げる)
+const APP_VERSION = '1.6.0';
+
 // ---------- DOM ----------
 const $ = (id) => document.getElementById(id);
 
@@ -92,6 +95,11 @@ function applyTimeTheme() {
   const tagline = document.getElementById('tagline');
   if (tagline) tagline.textContent = taglines[timeMode];
 }
+
+// バージョン表記 (画面タイトルとタブタイトル)
+const versionBadge = document.getElementById('version-badge');
+if (versionBadge) versionBadge.textContent = 'v' + APP_VERSION;
+document.title = `My Jigsaw Puzzle v${APP_VERSION} - 写真でジグソーパズル`;
 
 applyTimeTheme();
 // 遊んでいる間に時間帯が変わったら追従 (毎分チェック)
