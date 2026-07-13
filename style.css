@@ -909,6 +909,65 @@ body.time-night .scene-vignette {
 
 /* ===== モバイル ===== */
 @media (max-width: 600px) {
+  /* 縦方向を圧縮してノッチ付き実機でも1画面に収める */
+  #setup-screen {
+    gap: 12px;
+  }
+
+  .setup-header h1 {
+    font-size: 1.5rem;
+  }
+
+  .version {
+    font-size: 0.52em;
+    padding: 2px 8px;
+    margin-left: 0.5em;
+  }
+
+  .setup-header p {
+    font-size: 0.8rem;
+    letter-spacing: 0.04em;
+    margin-top: 6px;
+  }
+
+  .setup-card {
+    gap: 12px;
+    padding: 14px;
+  }
+
+  .dropzone {
+    padding: 14px 12px;
+  }
+
+  .dropzone-icon {
+    width: 44px;
+    height: 44px;
+    font-size: 1.3rem;
+    margin-bottom: 8px;
+    border-radius: 14px;
+  }
+
+  .dropzone-title {
+    font-size: 0.95rem;
+  }
+
+  .btn-primary {
+    padding: 12px;
+    font-size: 1rem;
+  }
+
+  /* 月・昼の太陽はタイトル文字と重ならない位置へ */
+  body.time-night .scene-sun,
+  body.time-day .scene-sun {
+    top: 8vh;
+    left: 82%;
+  }
+
+  body.time-night .scene-reflection,
+  body.time-day .scene-reflection {
+    left: 82%;
+  }
+
   /* 3列 + 中央寄せ2つの2段組み */
   .difficulty-buttons {
     grid-template-columns: repeat(6, 1fr);

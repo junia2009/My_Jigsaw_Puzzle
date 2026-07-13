@@ -6,7 +6,7 @@
  * ============================================================ */
 
 // アプリのバージョン
-const APP_VERSION = '1.6.1';
+const APP_VERSION = '1.6.2';
 
 // ---------- DOM ----------
 const $ = (id) => document.getElementById(id);
