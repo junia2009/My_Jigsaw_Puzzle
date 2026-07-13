@@ -447,21 +447,28 @@ function draw() {
   const W = canvas.width;
   const H = canvas.height;
 
-  // 背景
+  // 背景 (画面全体のテーマと揃えたダークトーン + 中央の淡いグロー)
   const bg = ctx.createLinearGradient(0, 0, 0, H);
-  bg.addColorStop(0, '#1f2338');
-  bg.addColorStop(1, '#161929');
+  bg.addColorStop(0, '#141830');
+  bg.addColorStop(1, '#0b0d17');
   ctx.fillStyle = bg;
+  ctx.fillRect(0, 0, W, H);
+
+  const glow = ctx.createRadialGradient(W / 2, H / 2, 0, W / 2, H / 2, Math.max(W, H) * 0.6);
+  glow.addColorStop(0, 'rgba(255,179,71,0.06)');
+  glow.addColorStop(0.5, 'rgba(139,92,246,0.04)');
+  glow.addColorStop(1, 'rgba(0,0,0,0)');
+  ctx.fillStyle = glow;
   ctx.fillRect(0, 0, W, H);
 
   // 盤面
   ctx.save();
-  ctx.fillStyle = 'rgba(255,255,255,0.05)';
-  ctx.strokeStyle = 'rgba(255,255,255,0.35)';
+  ctx.fillStyle = 'rgba(255,255,255,0.04)';
+  ctx.strokeStyle = 'rgba(255,255,255,0.28)';
   ctx.lineWidth = 2;
   ctx.setLineDash([10, 7]);
   ctx.beginPath();
-  ctx.roundRect(g.boardX - 5, g.boardY - 5, g.boardW + 10, g.boardH + 10, 8);
+  ctx.roundRect(g.boardX - 6, g.boardY - 6, g.boardW + 12, g.boardH + 12, 10);
   ctx.fill();
   ctx.stroke();
   ctx.restore();

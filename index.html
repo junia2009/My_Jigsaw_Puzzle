@@ -2,7 +2,7 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
 <title>My Jigsaw Puzzle - 写真でジグソーパズル</title>
 <meta name="description" content="好きな写真をアップロードして自分だけのジグソーパズルを作って遊べるゲーム">
 <meta name="theme-color" content="#1a1d2e">
@@ -18,9 +18,12 @@
 
 <!-- ===== セットアップ画面 ===== -->
 <div id="setup-screen" class="screen">
+  <div class="deco deco-1" aria-hidden="true">🧩</div>
+  <div class="deco deco-2" aria-hidden="true">🧩</div>
+
   <header class="setup-header">
-    <h1>🧩 My Jigsaw Puzzle</h1>
-    <p>好きな写真でジグソーパズルを作って遊ぼう!</p>
+    <h1><span class="title-icon">🧩</span>My Jigsaw Puzzle</h1>
+    <p>好きな写真が、あなただけのパズルになる</p>
   </header>
 
   <div class="setup-card">
@@ -29,8 +32,8 @@
       <input type="file" id="file-input" accept="image/*" hidden>
       <div id="dropzone-empty">
         <div class="dropzone-icon">📷</div>
-        <p><strong>ここに写真をドラッグ&ドロップ</strong></p>
-        <p class="muted">またはクリックしてファイルを選択</p>
+        <p class="dropzone-title">写真を選ぶ</p>
+        <p class="muted">タップして選択、またはドラッグ&ドロップ</p>
       </div>
       <div id="dropzone-preview" hidden>
         <img id="preview-img" alt="選択した画像">
@@ -38,17 +41,17 @@
       </div>
     </div>
 
-    <button id="sample-btn" class="btn btn-ghost" type="button">🎨 サンプル画像で遊ぶ</button>
+    <button id="sample-btn" class="btn btn-ghost" type="button"><span>🎨</span>サンプル画像で遊ぶ</button>
 
     <!-- 難易度 -->
     <div class="difficulty">
       <h2>ピースの数</h2>
       <div id="difficulty-buttons" class="difficulty-buttons">
-        <button class="btn diff-btn" data-pieces="12" type="button">かんたん<span>12</span></button>
-        <button class="btn diff-btn selected" data-pieces="24" type="button">ふつう<span>24</span></button>
-        <button class="btn diff-btn" data-pieces="54" type="button">むずかしい<span>54</span></button>
-        <button class="btn diff-btn" data-pieces="96" type="button">達人<span>96</span></button>
-        <button class="btn diff-btn" data-pieces="192" type="button">鬼<span>192</span></button>
+        <button class="diff-btn" data-pieces="12" type="button"><span class="diff-count">12</span><span class="diff-label">かんたん</span></button>
+        <button class="diff-btn selected" data-pieces="24" type="button"><span class="diff-count">24</span><span class="diff-label">ふつう</span></button>
+        <button class="diff-btn" data-pieces="54" type="button"><span class="diff-count">54</span><span class="diff-label">むずかしい</span></button>
+        <button class="diff-btn" data-pieces="96" type="button"><span class="diff-count">96</span><span class="diff-label">達人</span></button>
+        <button class="diff-btn" data-pieces="192" type="button"><span class="diff-count">192</span><span class="diff-label">鬼</span></button>
       </div>
     </div>
 
@@ -65,10 +68,10 @@
       <span id="stat-pieces" class="stat" title="はめたピース">✅ 0 / 0</span>
     </div>
     <div class="toolbar-right">
-      <button id="hint-btn" class="btn btn-small" type="button" title="盤面にうっすら完成図を表示">💡 ヒント</button>
-      <button id="peek-btn" class="btn btn-small" type="button" title="完成図を見る">🖼 完成図</button>
-      <button id="shuffle-btn" class="btn btn-small" type="button" title="ピースをばらまき直す">🔀 シャッフル</button>
-      <button id="new-btn" class="btn btn-small" type="button" title="別の写真・難易度でやり直す">🏠 新しいパズル</button>
+      <button id="hint-btn" class="btn btn-small" type="button" title="盤面にうっすら完成図を表示"><span>💡</span><span class="btn-label">ヒント</span></button>
+      <button id="peek-btn" class="btn btn-small" type="button" title="完成図を見る"><span>🖼</span><span class="btn-label">完成図</span></button>
+      <button id="shuffle-btn" class="btn btn-small" type="button" title="ピースをばらまき直す"><span>🔀</span><span class="btn-label">シャッフル</span></button>
+      <button id="new-btn" class="btn btn-small" type="button" title="別の写真・難易度でやり直す"><span>🏠</span><span class="btn-label">新しいパズル</span></button>
     </div>
   </div>
   <div id="game-main" class="game-main">
